@@ -1,9 +1,11 @@
-import mechanize, yaml, re, time, sys
+import mechanize, yaml, re, time, sys, random
 
 WEBSTA_URL = "http://websta.me/"
 WEBSTA_LOGIN = WEBSTA_URL + "login"
 WEBSTA_HASHTAG = WEBSTA_URL + "hot"
 WEBSTA_LIKE = WEBSTA_URL + "api/like/"
+WEBSTA_USER = WEBSTA_URL + "n/"
+WEBSTA_POST = WEBSTA_URL + "p/"
 
 INSTAGRAM_LOGIN = "https://instagram.com/accounts/login/"
 USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
@@ -41,11 +43,19 @@ def getHashtagsFromFile():
     hashtags = [line.strip() for line in open(filename)]
     f.close()
     return hashtags
+
+def getUserFromPost(br, id):
 	
+	br.open(WEBSTA_POST + id)
+	username = re.findall('\"(.*)\" class=\"username\"\>', br.response().read())
+	print "Username From Post"
+	print "User: " + str(username)
+	return username
+
 def like(br, hashtags):
 
 	likes = 0
-
+	random.shuffle(hashtags)
 	for hashtag in hashtags:
 		hashtaglikes = 0
 		media_id = []
@@ -66,6 +76,7 @@ def like(br, hashtags):
 				print "This # is currently " + str(MAX_LIKES)
 				sys.exit()
 				break
+			getUserFromPost(br, id)
 			br.open(WEBSTA_LIKE + id)
 			if bool(re.match("{\"status\":\"OK\",\"message\":\"LIKED\"", br.response().read())):
 				print "YOU LIKED " + str(id)
