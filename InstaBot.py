@@ -44,13 +44,6 @@ def getHashtagsFromFile():
     f.close()
     return hashtags
 
-def getUserFromPost(br, id):
-	
-	br.open(WEBSTA_POST + id)
-	username = re.findall('\"(.*)\" class=\"username\"\>', br.response().read())
-	print "Username From Post"
-	print "User: " + str(username)
-	return username
 
 def like(br, hashtags):
 
